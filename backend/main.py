@@ -20,6 +20,7 @@ any static file server.
 
 from __future__ import annotations
 
+import os
 import time
 from collections import deque
 from contextlib import asynccontextmanager
@@ -302,6 +303,20 @@ def reset_simulator():
 # ---------------------------------------------------------------------------
 # Serve the frontend (index.html, app.js, style.css) from the same service.
 # Must be mounted LAST so it doesn't shadow the /api/* routes above.
+#
+# Resolved relative to THIS FILE's location (not the process's working
+# directory) so it works no matter how/where the host launches uvicorn
+# (locally from backend/, or from a host like Render that may launch from
+# the repo root).
 # ---------------------------------------------------------------------------
 
-app.mount("/", StaticFiles(directory="../frontend", html=True), name="frontend")
+FRONTEND_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "frontend")
+app.mount("/", StaticFiles(directory=FRONTEND_DIR, html=True), name="frontend")
+
+
+if __name__ == "__main__":
+    # Allows `python main.py` to work directly on hosts (like Render) that
+    # set a PORT env var, in addition to the usual `uvicorn main:app`.
+    import uvicorn
+
+    uvicorn.run(app, host="0.0.0.0", port=int(os.environ.get("PORT", 8000)))
