@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>HP ONE — Unified Forecourt Command Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <div class="brand">
+    <img src="hp_logo.png" alt="HP Logo" class="brand-logo" />
+    <div class="brand-text">
+      <div class="brand-title">HP ONE</div>
+      <div class="brand-sub">Unified Forecourt Command Dashboard · Project UDAAN</div>
+    </div>
+  </div>
+  <div class="outlet-info">
+    <div class="outlet-name" id="outletName">HPCL Retail Outlet — Bengaluru Retail Zone</div>
+    <div class="live-row">
+      <span class="live-dot" id="liveDot"></span>
+      <span id="connStatus">connecting…</span>
+      <span class="clock" id="clock">--:--:--</span>
+    </div>
+  </div>
+</header>
+
+<!-- KPI STRIP -->
+<section class="kpi-strip" id="kpiStrip">
+  <div class="kpi">
+    <div class="kpi-label">Bays Active</div>
+    <div class="kpi-value" id="kpiBays">–</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">Live Alerts</div>
+    <div class="kpi-value" id="kpiAlerts">–</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">Auditor Health</div>
+    <div class="kpi-value" id="kpiHealth">–</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">Tanks Monitored</div>
+    <div class="kpi-value" id="kpiTanks">–</div>
+  </div>
+</section>
+
+<!-- MAIN GRID -->
+<main class="grid">
+
+  <!-- MODULE 1 — SMART BAY ALLOCATION -->
+  <section class="panel panel-bays">
+    <div class="panel-head">
+      <div>
+        <span class="panel-eyebrow">Module 01</span>
+        <h2>Smart Bay Allocation</h2>
+      </div>
+      <span class="panel-tag">YOLOv8 + ANPR</span>
+    </div>
+    
+    <!-- SVG Station Map -->
+    <div class="station-map-wrapper">
+      <div class="map-overlay-title">Interactive Station Forecourt Map</div>
+      <svg class="station-svg" viewBox="0 0 600 240" id="stationSvg">
+        <!-- Background grid/lanes -->
+        <rect x="10" y="10" width="580" height="220" rx="15" fill="rgba(10, 25, 47, 0.3)" stroke="rgba(255,255,255,0.08)" stroke-width="2"/>
+        <line x1="300" y1="10" x2="300" y2="230" stroke="rgba(255,255,255,0.05)" stroke-dasharray="5,5" stroke-width="1.5"/>
+        
+        <!-- Markings -->
+        <text x="35" y="120" fill="rgba(255,255,255,0.15)" font-size="9" font-family="monospace" letter-spacing="1" text-anchor="middle" transform="rotate(-90 35 120)">◀ VEHICLE ENTRY</text>
+        <text x="565" y="120" fill="rgba(255,255,255,0.15)" font-size="9" font-family="monospace" letter-spacing="1" text-anchor="middle" transform="rotate(90 565 120)">VEHICLE EXIT ▶</text>
+        
+        <!-- Lanes -->
+        <path d="M 60 70 L 540 70" stroke="rgba(255,255,255,0.03)" stroke-width="36" stroke-dasharray="10,8" fill="none"/>
+        <path d="M 60 170 L 540 170" stroke="rgba(255,255,255,0.03)" stroke-width="36" stroke-dasharray="10,8" fill="none"/>
+        
+        <!-- Dispenser Bay SVG groups -->
+        <!-- Lane 1 Bays -->
+        <g class="svg-bay open" id="svg-Bay-1" transform="translate(130, 70)">
+          <rect x="-35" y="-22" width="70" height="44" rx="6" class="bay-bg"/>
+          <text x="0" y="-3" class="bay-text-id">BAY 1</text>
+          <text x="0" y="13" class="bay-text-status">OPEN</text>
+          <circle cx="0" cy="-30" r="4.5" class="bay-indicator"/>
+        </g>
+        
+        <g class="svg-bay open" id="svg-Bay-2" transform="translate(300, 70)">
+          <rect x="-35" y="-22" width="70" height="44" rx="6" class="bay-bg"/>
+          <text x="0" y="-3" class="bay-text-id">BAY 2</text>
+          <text x="0" y="13" class="bay-text-status">OPEN</text>
+          <circle cx="0" cy="-30" r="4.5" class="bay-indicator"/>
+        </g>
+        
+        <g class="svg-bay open" id="svg-Bay-3" transform="translate(470, 70)">
+          <rect x="-35" y="-22" width="70" height="44" rx="6" class="bay-bg"/>
+          <text x="0" y="-3" class="bay-text-id">BAY 3</text>
+          <text x="0" y="13" class="bay-text-status">OPEN</text>
+          <circle cx="0" cy="-30" r="4.5" class="bay-indicator"/>
+        </g>
+        
+        <!-- Lane 2 Bays -->
+        <g class="svg-bay open" id="svg-Bay-4" transform="translate(130, 170)">
+          <rect x="-35" y="-22" width="70" height="44" rx="6" class="bay-bg"/>
+          <text x="0" y="-3" class="bay-text-id">BAY 4</text>
+          <text x="0" y="13" class="bay-text-status">OPEN</text>
+          <circle cx="0" cy="30" r="4.5" class="bay-indicator"/>
+        </g>
+        
+        <g class="svg-bay open" id="svg-Bay-5" transform="translate(300, 170)">
+          <rect x="-35" y="-22" width="70" height="44" rx="6" class="bay-bg"/>
+          <text x="0" y="-3" class="bay-text-id">BAY 5</text>
+          <text x="0" y="13" class="bay-text-status">OPEN</text>
+          <circle cx="0" cy="30" r="4.5" class="bay-indicator"/>
+        </g>
+        
+        <g class="svg-bay open" id="svg-Bay-6" transform="translate(470, 170)">
+          <rect x="-35" y="-22" width="70" height="44" rx="6" class="bay-bg"/>
+          <text x="0" y="-3" class="bay-text-id">BAY 6</text>
+          <text x="0" y="13" class="bay-text-status">OPEN</text>
+          <circle cx="0" cy="30" r="4.5" class="bay-indicator"/>
+        </g>
+      </svg>
+    </div>
+
+    <!-- Bay Card Grid -->
+    <div class="bay-forecourt" id="bayForecourt"></div>
+    
+    <div class="subpanel">
+      <div class="subpanel-title">Recent ANPR Detections</div>
+      <div class="detection-feed" id="detectionFeed"></div>
+    </div>
+  </section>
+
+  <!-- MODULE 2 — INVISIBLE AUDITOR -->
+  <section class="panel panel-auditor">
+    <div class="panel-head">
+      <div>
+        <span class="panel-eyebrow">Module 02</span>
+        <h2>The Invisible Auditor</h2>
+      </div>
+      <span class="panel-tag">Isolation Forest · FCC</span>
+    </div>
+    
+    <div class="nozzle-grid-title">Dispenser Nozzle Health Matrix</div>
+    <div class="nozzle-grid" id="nozzleGrid"></div>
+    
+    <div class="subpanel">
+      <div class="subpanel-title">Fraud &amp; Failure Alerts</div>
+      <div class="alert-feed" id="alertFeed"></div>
+    </div>
+  </section>
+
+  <!-- MODULE 3 — TANK MONITORING -->
+  <section class="panel panel-tanks">
+    <div class="panel-head">
+      <div>
+        <span class="panel-eyebrow">Module 03</span>
+        <h2>Predictive Tank Monitoring</h2>
+      </div>
+      <span class="panel-tag">ARIMA / LSTM · ATG</span>
+    </div>
+    
+    <div class="tank-row" id="tankRow"></div>
+    
+    <div class="subpanel">
+      <div class="subpanel-title">12-Hour Volume Forecast</div>
+      <div class="chart-container">
+        <canvas id="forecastChart" height="110"></canvas>
+      </div>
+    </div>
+    
+    <div class="subpanel">
+      <div class="subpanel-title">Reorder &amp; Contamination Alerts</div>
+      <div class="tank-alert-feed" id="tankAlertFeed"></div>
+    </div>
+  </section>
+
+</main>
+
+<!-- CONSOLE TERMINAL -->
+<section class="console-panel">
+  <div class="console-header">
+    <div class="console-title">
+      <span class="terminal-dot red"></span>
+      <span class="terminal-dot yellow"></span>
+      <span class="terminal-dot green"></span>
+      <span class="console-label">HP ONE LIVE TELEMETRY STREAMS</span>
+    </div>
+    <div class="console-controls">
+      <button class="console-btn" id="clearConsoleBtn" onclick="clearConsole()">Clear Logs</button>
+      <button class="console-btn" id="pauseConsoleBtn" onclick="toggleConsolePause()">Pause Feed</button>
+    </div>
+  </div>
+  <div class="console-log" id="consoleLog"></div>
+</section>
+
+<!-- SIMULATION CONTROL SIDEBAR -->
+<div class="sim-control-drawer" id="simControlDrawer">
+  <button class="sim-drawer-toggle" id="simDrawerToggle" onclick="toggleSimDrawer()">
+    <span class="sim-toggle-text">⚙️ SIMULATOR CONTROLS</span>
+  </button>
+  <div class="sim-drawer-content">
+    <div class="sim-drawer-header">
+      <h3>Simulation Control Center</h3>
+      <button class="sim-reset-btn" onclick="triggerReset()">Reset State</button>
+    </div>
+    
+    <!-- Module 1 Controls -->
+    <div class="sim-control-group">
+      <h4>Module 1 — Smart Bay Allocation</h4>
+      <div class="sim-control-row">
+        <label>Inject Violation:</label>
+        <select id="simBayViolation">
+          <option value="Mobile phone use at dispenser">Mobile Phone Use</option>
+          <option value="Engine not switched off">Engine Not Off</option>
+          <option value="Smoking near fuel bay">Smoking near Bay</option>
+          <option value="No helmet (two-wheeler)">No Helmet</option>
+          <option value="Unauthorized loitering in bay">Loitering in Bay</option>
+        </select>
+        <button class="btn-inject" onclick="injectBayViolation()">Inject Next</button>
+      </div>
+      <div class="sim-control-row">
+        <label>Bay Action:</label>
+        <select id="simBayId">
+          <option value="Bay-1">Bay-1</option>
+          <option value="Bay-2">Bay-2</option>
+          <option value="Bay-3">Bay-3</option>
+          <option value="Bay-4">Bay-4</option>
+          <option value="Bay-5">Bay-5</option>
+          <option value="Bay-6">Bay-6</option>
+        </select>
+        <button class="btn-inject btn-red" onclick="triggerBayAction('suspend_bay')">Suspend</button>
+        <button class="btn-inject btn-green" onclick="triggerBayAction('clear_bay')">Free Bay</button>
+      </div>
+    </div>
+
+    <!-- Module 2 Controls -->
+    <div class="sim-control-group">
+      <h4>Module 2 — Invisible Auditor</h4>
+      <div class="sim-control-row">
+        <label>Select Nozzle:</label>
+        <select id="simNozzleId">
+          <option value="N-01">N-01</option>
+          <option value="N-02">N-02</option>
+          <option value="N-03">N-03</option>
+          <option value="N-04">N-04</option>
+          <option value="N-05">N-05</option>
+          <option value="N-06">N-06</option>
+          <option value="N-07">N-07</option>
+          <option value="N-08">N-08</option>
+        </select>
+      </div>
+      <div class="sim-control-buttons">
+        <button class="btn-inject btn-red" onclick="triggerNozzleAction('air_fraud')">Inject Air Fraud</button>
+        <button class="btn-inject btn-orange" onclick="triggerNozzleAction('mechanical_drift')">Inject Drift</button>
+        <button class="btn-inject btn-green" onclick="triggerNozzleAction('clear_nozzle')">Set Nominal</button>
+      </div>
+    </div>
+
+    <!-- Module 3 Controls -->
+    <div class="sim-control-group">
+      <h4>Module 3 — ATG Tank Monitoring</h4>
+      <div class="sim-control-row">
+        <label>Select Tank:</label>
+        <select id="simTankId">
+          <option value="T-1">T-1 (Petrol)</option>
+          <option value="T-2">T-2 (Diesel)</option>
+          <option value="T-3">T-3 (Premium Petrol)</option>
+        </select>
+      </div>
+      <div class="sim-control-buttons">
+        <button class="btn-inject btn-red" onclick="triggerTankAction('leak')">Trigger Leak</button>
+        <button class="btn-inject btn-blue" onclick="triggerTankAction('water_ingress')">Water Ingress</button>
+        <button class="btn-inject btn-green" onclick="triggerTankAction('refill')">Refill Tank</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DETAILS INSPECTOR DRAWER -->
+<div class="inspector-drawer" id="inspectorDrawer">
+  <div class="inspector-header">
+    <h3 id="inspectorTitle">Component Details</h3>
+    <button class="close-drawer" onclick="closeInspector()">&times;</button>
+  </div>
+  <div class="inspector-body" id="inspectorBody">
+    <div class="empty-state">Select any Bay, Nozzle, or Tank card to inspect live streams.</div>
+  </div>
+</div>
+
+<footer class="footer">
+  © Hindustan Petroleum Corporation Limited | 2026 — Project UDAAN Summer Internship Submission
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>

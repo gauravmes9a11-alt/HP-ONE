@@ -1,0 +1,21 @@
+# Core API
+fastapi==0.115.0
+uvicorn[standard]==0.30.6
+pydantic==2.9.2
+
+# Module 2 — Invisible Auditor (Isolation Forest)
+scikit-learn==1.5.2
+numpy==1.26.4
+
+# Module 3 — Predictive Tank Monitoring (ARIMA baseline)
+statsmodels==0.14.2
+pandas==2.2.2
+
+# --- Optional extras (NOT required to run the dashboard) ---
+# Module 1 live CV pipeline (only needed for real camera/video inference;
+# the dashboard runs in full simulation mode without these):
+#   ultralytics==8.2.103
+#   opencv-python==4.10.0.84
+#
+# Module 3 LSTM upgrade path (ARIMA is used automatically if this is absent):
+#   torch==2.4.1
